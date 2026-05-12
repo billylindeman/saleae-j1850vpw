@@ -1,0 +1,103 @@
+name: build
+
+on:
+  push:
+    branches: [master, main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    name: Linux x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: saleae-j1850vpw }
+
+      - uses: actions/checkout@v4
+        with:
+          repository: saleae/AnalyzerSDK
+          path: AnalyzerSDK
+
+      - name: Configure
+        working-directory: saleae-j1850vpw
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        working-directory: saleae-j1850vpw
+        run: cmake --build build -j
+
+      - name: Test
+        working-directory: saleae-j1850vpw/build
+        run: ctest --output-on-failure
+
+      - name: Stage install
+        working-directory: saleae-j1850vpw
+        run: cmake --install build --prefix install --config Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: J1850VpwAnalyzer-linux-x86_64
+          path: saleae-j1850vpw/install/Analyzers/libJ1850VpwAnalyzer.so
+          if-no-files-found: error
+          retention-days: 14
+
+  windows:
+    name: Windows x86_64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: saleae-j1850vpw }
+
+      - uses: actions/checkout@v4
+        with:
+          repository: saleae/AnalyzerSDK
+          path: AnalyzerSDK
+
+      - name: Configure
+        working-directory: saleae-j1850vpw
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DJ1850VPW_BUILD_TESTS=OFF
+
+      - name: Build
+        working-directory: saleae-j1850vpw
+        run: cmake --build build --config Release
+
+      - name: Stage install
+        working-directory: saleae-j1850vpw
+        run: cmake --install build --prefix install --config Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: J1850VpwAnalyzer-windows-x86_64
+          path: saleae-j1850vpw/install/Analyzers/J1850VpwAnalyzer.dll
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Stage release assets
+        run: |
+          mkdir release
+          cp artifacts/J1850VpwAnalyzer-linux-x86_64/libJ1850VpwAnalyzer.so \
+             release/J1850VpwAnalyzer-${GITHUB_REF_NAME}-linux-x86_64.so
+          cp artifacts/J1850VpwAnalyzer-windows-x86_64/J1850VpwAnalyzer.dll \
+             release/J1850VpwAnalyzer-${GITHUB_REF_NAME}-windows-x86_64.dll
+          ls -la release/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

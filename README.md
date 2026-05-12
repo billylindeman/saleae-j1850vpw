@@ -44,6 +44,7 @@ active.
   schema, FrameV2 export schema, CSV export
 - [**docs/PROTOCOL.md**](docs/PROTOCOL.md) — VPW physical-layer reference:
   bit timing, encoding rules, frame structure, CRC-8
+- [**docs/RELEASE.md**](docs/RELEASE.md) — CI pipeline and how to cut a release
 
 The SDK skeleton follows Saleae's
 [SampleAnalyzer](https://github.com/saleae/SampleAnalyzer) template.
