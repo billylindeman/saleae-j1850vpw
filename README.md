@@ -31,10 +31,10 @@ folder (**Edit → Preferences → Custom Low Level Analyzers**), restart, then
 **Analyzers → Add Analyzer → SAE J1850 VPW**. Pick the channel and active
 polarity and you're decoding.
 
-If your capture was taken on an analog channel rather than a digital one, in
-Logic 2 first apply a digital threshold (channel settings → "Apply Digital
-Threshold") around 3–4 V — J1850 idles at 0 V passive and pulses to ~7 V
-active.
+The analyzer reads a digital channel. If you only have an analog recording,
+recapture with the digital channel enabled on the same probe and set the
+digital threshold around 3–4 V in the capture settings — J1850 idles at 0 V
+passive and pulses to ~7 V active.
 
 ## Documentation
 

@@ -14,8 +14,10 @@ library that Logic 2 loads at startup.
   have authoritative Saleae documentation.
 - **Isn't**: an analog-signal analyzer. The Saleae Analyzer SDK is digital-only
   (`AnalyzerChannelData::GetBitState()` is the only sample-access API). If a
-  user captured analog, Logic 2 itself has to apply a threshold first, then
-  this analyzer runs on the derived digital channel.
+  user only captured analog, they have to **recapture** with the digital
+  channel enabled on the same probe (the threshold is set at capture time in
+  Logic 2's capture settings, not as a post-processing step on an existing
+  analog channel — there is no such post-process feature).
 
 ## Repository layout
 

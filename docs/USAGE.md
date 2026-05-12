@@ -11,9 +11,11 @@
    - **Verify Checksum** — enable to flag CSUM mismatches with the standard
      error highlight
 
-If your capture is on an analog channel, first apply a digital threshold in
-Logic 2 (channel settings → **Apply Digital Threshold**). J1850 VPW idles at
-0 V passive and pulses to ~7 V active; a 3–4 V threshold works for typical
+The analyzer reads a digital channel only. If you only have an analog
+recording, recapture with the digital channel enabled on the same probe and
+set the digital threshold around 3–4 V in the capture settings (Logic 2's
+**Capture** panel → **Digital Threshold**). J1850 VPW idles at 0 V passive
+and pulses to ~7 V active, so 3–4 V is a safe trip point for typical
 transceiver outputs or raw-bus probes.
 
 ## Annotation bubbles
